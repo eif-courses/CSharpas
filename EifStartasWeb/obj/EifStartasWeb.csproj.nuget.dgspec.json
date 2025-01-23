@@ -67,6 +67,10 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Microsoft.Extensions.Localization": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
             "Microsoft.FluentUI.AspNetCore.Components": {
               "target": "Package",
               "version": "[4.11.3, )"

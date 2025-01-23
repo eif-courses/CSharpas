@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,8 +6,12 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using EifStartasWeb.Components;
 using EifStartasWeb.Components.Account;
 using EifStartasWeb.Data;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -38,6 +43,28 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+
+// Kalbų lokalizavimas
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Localization";
+});
+
+var supportedCultures = new[]{
+    new CultureInfo("en-US"),
+    new CultureInfo("lt-LT")
+};
+
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("lt-LT"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,6 +78,12 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
+app.UseRequestLocalization(localizationOptions);
+
+
+app.MapControllers();
 
 app.UseHttpsRedirection();
 

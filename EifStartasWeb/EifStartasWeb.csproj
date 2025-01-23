@@ -19,7 +19,32 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.1" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.3"/>
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Localization\strings.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>strings.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Localization\strings.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>strings.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Localization\strings.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>strings.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Localization\strings.en.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>strings.en.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>
