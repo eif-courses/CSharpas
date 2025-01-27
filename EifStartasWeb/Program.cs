@@ -93,13 +93,13 @@ else
 }
 
 
-app.UseRequestLocalization(localizationOptions);
+
 
 
 app.MapControllers();
 
 app.UseHttpsRedirection();
-
+app.UseRequestLocalization(localizationOptions);
 app.UseAntiforgery();
 
 app.MapStaticAssets();

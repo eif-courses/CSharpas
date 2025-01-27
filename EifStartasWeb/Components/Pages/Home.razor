@@ -1,8 +1,10 @@
 ﻿@page "/"
-
+@using EifStartasWeb.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Translations> t
 <PageTitle>Home</PageTitle>
 
-<h1>Hello laba</h1>
-<ul><li>kas</li></ul>
+<h1>@t["app_name"]</h1>
+
 
 Welcome to your new Fluent Blazor app.
