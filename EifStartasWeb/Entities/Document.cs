@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace EifStartasWeb.Entities;
-
+// https://app.mockflow.com/view/MkI1gJwDaqb
 public class Document
 {
     public int Id { get; set; }
