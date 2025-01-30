@@ -54,33 +54,51 @@ public class ExternalReviewer
     public ICollection<ExternalReviewerReview> Reviews { get; set; }
 }
 
+
+public enum ReviewStatus
+{
+    Draft,
+    Submitted,
+    Approved,
+    Rejected
+}
+
+
 public class SupervisorReview
 {
     public int Id { get; set; }
     public string Content { get; set; }
-    public string SpecialInstructions { get; set; } // Specific to Supervisor
-    public DateTime CreatedAt { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
     public string SupervisorId { get; set; }
     public IdentityUser Supervisor { get; set; }
+    
+    public ReviewStatus Status { get; set; }
 }
 
 public class ExternalReviewerReview
 {
     public int Id { get; set; }
     public string Content { get; set; }
-    public string EvaluationCriteria { get; set; } // Specific to External Reviewer
-    public DateTime CreatedAt { get; set; }
+    
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
     public string ReviewerId { get; set; }
     public ExternalReviewer Reviewer { get; set; }
+    
+    public ReviewStatus Status { get; set; }
+    
 }
+
+
+
 
 public static class DocumentModelBuilderExtensions
 {
@@ -134,8 +152,7 @@ public static class DocumentModelBuilderExtensions
         {
             entity.HasKey(sr => sr.Id);
             entity.Property(sr => sr.Content).IsRequired();
-            entity.Property(sr => sr.SpecialInstructions); // Optional
-
+            
             entity.HasOne(sr => sr.Document)
                 .WithMany()
                 .HasForeignKey(sr => sr.DocumentId)
@@ -151,8 +168,7 @@ public static class DocumentModelBuilderExtensions
         {
             entity.HasKey(err => err.Id);
             entity.Property(err => err.Content).IsRequired();
-            entity.Property(err => err.EvaluationCriteria); // Optional
-
+            
             entity.HasOne(err => err.Document)
                 .WithMany()
                 .HasForeignKey(err => err.DocumentId)

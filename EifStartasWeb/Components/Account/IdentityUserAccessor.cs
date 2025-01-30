@@ -4,10 +4,10 @@ using EifStartasWeb.Data;
 namespace EifStartasWeb.Components.Account;
 
 internal sealed class IdentityUserAccessor(
-    UserManager<ApplicationUser> userManager,
+    UserManager<IdentityUser> userManager,
     IdentityRedirectManager redirectManager)
 {
-    public async Task<ApplicationUser> GetRequiredUserAsync(HttpContext context)
+    public async Task<IdentityUser> GetRequiredUserAsync(HttpContext context)
     {
         var user = await userManager.GetUserAsync(context.User);
 

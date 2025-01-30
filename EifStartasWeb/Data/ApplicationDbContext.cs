@@ -1,11 +1,12 @@
 using EifStartasWeb.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EifStartasWeb.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<ApplicationUser>(options)
+    : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<Document> Documents { get; set; }
     public DbSet<Student> Students { get; set; }
