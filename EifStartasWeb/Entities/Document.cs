@@ -90,7 +90,7 @@ public class ExternalReviewerReview
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
-    public string ReviewerId { get; set; }
+    public int ReviewerId { get; set; }
     public ExternalReviewer Reviewer { get; set; }
     
     public ReviewStatus Status { get; set; }
@@ -152,7 +152,7 @@ public static class DocumentModelBuilderExtensions
         {
             entity.HasKey(sr => sr.Id);
             entity.Property(sr => sr.Content).IsRequired();
-            
+
             entity.HasOne(sr => sr.Document)
                 .WithMany()
                 .HasForeignKey(sr => sr.DocumentId)
@@ -160,7 +160,7 @@ public static class DocumentModelBuilderExtensions
 
             entity.HasOne(sr => sr.Supervisor)
                 .WithMany()
-                .HasForeignKey(sr => sr.SupervisorId)
+                .HasForeignKey(sr => sr.SupervisorId) // Ensure this is correctly mapped
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
