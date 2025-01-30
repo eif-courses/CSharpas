@@ -51,7 +51,7 @@ public class ExternalReviewer
     public string UserId { get; set; } // Foreign key to IdentityUser
     public IdentityUser User { get; set; }
 
-    public ICollection<ExternalReviewerReview> Reviews { get; set; }
+    public ICollection<ExternalReviewerReport> Reviews { get; set; }
 }
 
 
@@ -64,7 +64,7 @@ public enum ReviewStatus
 }
 
 
-public class SupervisorReview
+public class SupervisorReport
 {
     public int Id { get; set; }
     public string Content { get; set; }
@@ -80,7 +80,7 @@ public class SupervisorReview
     public ReviewStatus Status { get; set; }
 }
 
-public class ExternalReviewerReview
+public class ExternalReviewerReport
 {
     public int Id { get; set; }
     public string Content { get; set; }
@@ -148,7 +148,7 @@ public static class DocumentModelBuilderExtensions
             entity.Property(er => er.Name).IsRequired().HasMaxLength(100);
         });
 
-        modelBuilder.Entity<SupervisorReview>(entity =>
+        modelBuilder.Entity<SupervisorReport>(entity =>
         {
             entity.HasKey(sr => sr.Id);
             entity.Property(sr => sr.Content).IsRequired();
@@ -164,7 +164,7 @@ public static class DocumentModelBuilderExtensions
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<ExternalReviewerReview>(entity =>
+        modelBuilder.Entity<ExternalReviewerReport>(entity =>
         {
             entity.HasKey(err => err.Id);
             entity.Property(err => err.Content).IsRequired();

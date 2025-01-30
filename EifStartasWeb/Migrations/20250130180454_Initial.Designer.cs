@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EifStartasWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250130174833_initial_migration")]
-    partial class initial_migration
+    [Migration("20250130180454_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,10 +116,10 @@ namespace EifStartasWeb.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExternalReviewer");
+                    b.ToTable("ExternalReviewers");
                 });
 
-            modelBuilder.Entity("EifStartasWeb.Entities.ExternalReviewerReview", b =>
+            modelBuilder.Entity("EifStartasWeb.Entities.ExternalReviewerReport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,7 +147,7 @@ namespace EifStartasWeb.Migrations
 
                     b.HasIndex("ReviewerId");
 
-                    b.ToTable("ExternalReviewerReview");
+                    b.ToTable("ExternalReviewerReports");
                 });
 
             modelBuilder.Entity("EifStartasWeb.Entities.Student", b =>
@@ -199,7 +199,7 @@ namespace EifStartasWeb.Migrations
                     b.ToTable("Supervisors");
                 });
 
-            modelBuilder.Entity("EifStartasWeb.Entities.SupervisorReview", b =>
+            modelBuilder.Entity("EifStartasWeb.Entities.SupervisorReport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,7 +228,7 @@ namespace EifStartasWeb.Migrations
 
                     b.HasIndex("SupervisorId");
 
-                    b.ToTable("SupervisorReview");
+                    b.ToTable("SupervisorReports");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -472,7 +472,7 @@ namespace EifStartasWeb.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EifStartasWeb.Entities.ExternalReviewerReview", b =>
+            modelBuilder.Entity("EifStartasWeb.Entities.ExternalReviewerReport", b =>
                 {
                     b.HasOne("EifStartasWeb.Entities.Document", "Document")
                         .WithMany()
@@ -521,7 +521,7 @@ namespace EifStartasWeb.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EifStartasWeb.Entities.SupervisorReview", b =>
+            modelBuilder.Entity("EifStartasWeb.Entities.SupervisorReport", b =>
                 {
                     b.HasOne("EifStartasWeb.Entities.Document", "Document")
                         .WithMany()
