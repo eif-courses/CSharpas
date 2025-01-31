@@ -1,6 +1,9 @@
 ﻿namespace EifStartasWeb.Services;
 
-public class ImportFromExcelService
+public class ImportFromExcelService : IDataImportService
 {
-    
+    public async Task ImportFromExcelAsync(string filePath)
+    {
+        throw new NotImplementedException();
+    }
 }
