@@ -14,13 +14,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Supervisor> Supervisors { get; set; }
     public DbSet<ExternalReviewer> ExternalReviewers { get; set; }
     
-    
     public DbSet<ExternalReviewerReport> ExternalReviewerReports { get; set; }
     public DbSet<SupervisorReport> SupervisorReports { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ConfigureDocument(); // inicijuojame sąryšius tarp entity
+        
+        SeedData.Initialize(builder);
         
         base.OnModelCreating(builder);
     }

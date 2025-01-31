@@ -32,6 +32,10 @@ public class Student
     public ICollection<Document> Documents { get; set; }
     public int SupervisorId { get; set; }
     public Supervisor Supervisor { get; set; }
+
+    // One-to-One relationship with reports
+    public SupervisorReport SupervisorReport { get; set; }
+    public ExternalReviewerReport ExternalReviewerReport { get; set; }
 }
 
 public class Supervisor
@@ -68,36 +72,40 @@ public class SupervisorReport
 {
     public int Id { get; set; }
     public string Content { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
     public string SupervisorId { get; set; }
     public IdentityUser Supervisor { get; set; }
-    
+
     public ReviewStatus Status { get; set; }
+
+    // One-to-One relation with Student
+    public int StudentId { get; set; }
+    public Student Student { get; set; }
 }
 
 public class ExternalReviewerReport
 {
     public int Id { get; set; }
     public string Content { get; set; }
-    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
     public int ReviewerId { get; set; }
     public ExternalReviewer Reviewer { get; set; }
-    
+
     public ReviewStatus Status { get; set; }
-    
+
+    // One-to-One relation with Student
+    public int StudentId { get; set; }
+    public Student Student { get; set; }
 }
-
-
 
 
 public static class DocumentModelBuilderExtensions
@@ -133,7 +141,18 @@ public static class DocumentModelBuilderExtensions
             entity.HasOne(s => s.Supervisor)
                 .WithMany(su => su.Students)
                 .HasForeignKey(s => s.SupervisorId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading deletes
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // One-to-One relationships
+            entity.HasOne(s => s.SupervisorReport)
+                .WithOne(sr => sr.Student)
+                .HasForeignKey<SupervisorReport>(sr => sr.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(s => s.ExternalReviewerReport)
+                .WithOne(err => err.Student)
+                .HasForeignKey<ExternalReviewerReport>(err => err.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Supervisor>(entity =>
@@ -179,5 +198,34 @@ public static class DocumentModelBuilderExtensions
                 .HasForeignKey(err => err.ReviewerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        modelBuilder.Entity<DocumentPermission>(entity =>
+        {
+            entity.HasKey(dp => dp.Id);
+
+            entity.Property(dp => dp.PermissionType)
+                .IsRequired();
+
+            entity.HasOne(dp => dp.Document)
+                .WithMany()
+                .HasForeignKey(dp => dp.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);  // Delete permissions when a document is deleted
+
+            entity.HasOne(dp => dp.User)
+                .WithMany()
+                .HasForeignKey(dp => dp.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete permissions when a user is deleted
+
+            entity.HasOne(dp => dp.Supervisor)
+                .WithMany()
+                .HasForeignKey(dp => dp.SupervisorId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete permissions when a supervisor is deleted
+
+            entity.HasOne(dp => dp.Reviewer)
+                .WithMany()
+                .HasForeignKey(dp => dp.ReviewerId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete permissions when a reviewer is deleted
+        });
+        
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace EifStartasWeb.Services;
 
-public class DocumentService
+public class ImportFromExcelService
 {
     
 }

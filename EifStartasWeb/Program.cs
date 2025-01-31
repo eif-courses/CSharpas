@@ -6,6 +6,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using EifStartasWeb.Components;
 using EifStartasWeb.Components.Account;
 using EifStartasWeb.Data;
+using EifStartasWeb.Services;
 using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,11 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+
+
+
+builder.Services.AddScoped<DocumentPermissionService>();
 
 
 var config = builder.Configuration;
