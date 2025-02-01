@@ -7,6 +7,7 @@ using EifStartasWeb.Components;
 using EifStartasWeb.Components.Account;
 using EifStartasWeb.Data;
 using EifStartasWeb.Services;
+using EifStartasWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);

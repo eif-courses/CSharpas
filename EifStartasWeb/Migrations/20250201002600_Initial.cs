@@ -263,7 +263,9 @@ namespace EifStartasWeb.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     DocumentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
+                    SupervisorId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ReviewerId = table.Column<int>(type: "INTEGER", nullable: true),
                     PermissionType = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -281,6 +283,18 @@ namespace EifStartasWeb.Migrations
                         principalTable: "Documents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPermissions_ExternalReviewers_ReviewerId",
+                        column: x => x.ReviewerId,
+                        principalTable: "ExternalReviewers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPermissions_Supervisors_SupervisorId",
+                        column: x => x.SupervisorId,
+                        principalTable: "Supervisors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -291,9 +305,11 @@ namespace EifStartasWeb.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DocumentId = table.Column<int>(type: "INTEGER", nullable: false),
                     ReviewerId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -310,6 +326,12 @@ namespace EifStartasWeb.Migrations
                         principalTable: "ExternalReviewers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExternalReviewerReports_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -320,23 +342,31 @@ namespace EifStartasWeb.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DocumentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SupervisorId = table.Column<string>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    SupervisorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SupervisorReports", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SupervisorReports_AspNetUsers_SupervisorId",
-                        column: x => x.SupervisorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_SupervisorReports_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SupervisorReports_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SupervisorReports_Supervisors_SupervisorId",
+                        column: x => x.SupervisorId,
+                        principalTable: "Supervisors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -384,6 +414,16 @@ namespace EifStartasWeb.Migrations
                 column: "DocumentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DocumentPermissions_ReviewerId",
+                table: "DocumentPermissions",
+                column: "ReviewerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPermissions_SupervisorId",
+                table: "DocumentPermissions",
+                column: "SupervisorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DocumentPermissions_UserId",
                 table: "DocumentPermissions",
                 column: "UserId");
@@ -409,6 +449,12 @@ namespace EifStartasWeb.Migrations
                 column: "ReviewerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExternalReviewerReports_StudentId",
+                table: "ExternalReviewerReports",
+                column: "StudentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ExternalReviewers_UserId",
                 table: "ExternalReviewers",
                 column: "UserId");
@@ -427,6 +473,12 @@ namespace EifStartasWeb.Migrations
                 name: "IX_SupervisorReports_DocumentId",
                 table: "SupervisorReports",
                 column: "DocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupervisorReports_StudentId",
+                table: "SupervisorReports",
+                column: "StudentId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SupervisorReports_SupervisorId",

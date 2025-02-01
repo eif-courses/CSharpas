@@ -18,11 +18,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<SupervisorReport> SupervisorReports { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
-    {
-        builder.ConfigureDocument(); // inicijuojame sąryšius tarp entity
-        
-        SeedData.Initialize(builder);
-        
+    { 
         base.OnModelCreating(builder);
+        builder.ConfigureDocument(); // inicijuojame sąryšius tarp entity
     }
 }

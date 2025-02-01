@@ -1,4 +1,6 @@
-﻿namespace EifStartasWeb.Services;
+﻿using EifStartasWeb.Services.Interfaces;
+
+namespace EifStartasWeb.Services;
 
 public class CloudflareR2Service : IStorageService
 {

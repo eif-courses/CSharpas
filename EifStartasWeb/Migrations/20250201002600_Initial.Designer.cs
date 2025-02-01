@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EifStartasWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250130180454_Initial")]
+    [Migration("20250201002600_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -84,13 +84,22 @@ namespace EifStartasWeb.Migrations
                     b.Property<int>("PermissionType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ReviewerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("SupervisorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("ReviewerId");
+
+                    b.HasIndex("SupervisorId");
 
                     b.HasIndex("UserId");
 
@@ -141,11 +150,20 @@ namespace EifStartasWeb.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("StudentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentId");
 
                     b.HasIndex("ReviewerId");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
 
                     b.ToTable("ExternalReviewerReports");
                 });
@@ -218,13 +236,21 @@ namespace EifStartasWeb.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SupervisorId")
-                        .IsRequired()
+                    b.Property<int>("StudentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SupervisorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
 
                     b.HasIndex("SupervisorId");
 
@@ -450,13 +476,26 @@ namespace EifStartasWeb.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EifStartasWeb.Entities.ExternalReviewer", "Reviewer")
+                        .WithMany()
+                        .HasForeignKey("ReviewerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("EifStartasWeb.Entities.Supervisor", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("SupervisorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Document");
+
+                    b.Navigation("Reviewer");
+
+                    b.Navigation("Supervisor");
 
                     b.Navigation("User");
                 });
@@ -486,9 +525,16 @@ namespace EifStartasWeb.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EifStartasWeb.Entities.Student", "Student")
+                        .WithOne("ExternalReviewerReport")
+                        .HasForeignKey("EifStartasWeb.Entities.ExternalReviewerReport", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Document");
 
                     b.Navigation("Reviewer");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("EifStartasWeb.Entities.Student", b =>
@@ -529,13 +575,20 @@ namespace EifStartasWeb.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Supervisor")
+                    b.HasOne("EifStartasWeb.Entities.Student", "Student")
+                        .WithOne("SupervisorReport")
+                        .HasForeignKey("EifStartasWeb.Entities.SupervisorReport", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("EifStartasWeb.Entities.Supervisor", "Supervisor")
                         .WithMany()
                         .HasForeignKey("SupervisorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Document");
+
+                    b.Navigation("Student");
 
                     b.Navigation("Supervisor");
                 });
@@ -599,6 +652,12 @@ namespace EifStartasWeb.Migrations
             modelBuilder.Entity("EifStartasWeb.Entities.Student", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("ExternalReviewerReport")
+                        .IsRequired();
+
+                    b.Navigation("SupervisorReport")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EifStartasWeb.Entities.Supervisor", b =>

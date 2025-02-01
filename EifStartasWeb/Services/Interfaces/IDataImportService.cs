@@ -1,4 +1,4 @@
-﻿namespace EifStartasWeb.Services;
+﻿namespace EifStartasWeb.Services.Interfaces;
 
 public interface IDataImportService
 {

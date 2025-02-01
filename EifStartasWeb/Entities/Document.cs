@@ -78,12 +78,11 @@ public class SupervisorReport
     public int DocumentId { get; set; }
     public Document Document { get; set; }
 
-    public string SupervisorId { get; set; }
-    public IdentityUser Supervisor { get; set; }
+    public int SupervisorId { get; set; }  // Change from string to int
+    public Supervisor Supervisor { get; set; }
 
     public ReviewStatus Status { get; set; }
 
-    // One-to-One relation with Student
     public int StudentId { get; set; }
     public Student Student { get; set; }
 }
@@ -142,17 +141,18 @@ public static class DocumentModelBuilderExtensions
                 .WithMany(su => su.Students)
                 .HasForeignKey(s => s.SupervisorId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // One-to-One relationships
+            
             entity.HasOne(s => s.SupervisorReport)
                 .WithOne(sr => sr.Student)
                 .HasForeignKey<SupervisorReport>(sr => sr.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);  // Make it optional
 
             entity.HasOne(s => s.ExternalReviewerReport)
                 .WithOne(err => err.Student)
                 .HasForeignKey<ExternalReviewerReport>(err => err.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
         });
 
         modelBuilder.Entity<Supervisor>(entity =>
