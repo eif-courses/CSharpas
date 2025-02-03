@@ -29,9 +29,6 @@ builder.Services.AddScoped<IStorageService, CloudflareR2Service>();
 builder.Services.AddScoped<IDataImportService, ImportFromExcelService>();
 
 
-builder.Services.AddScoped<DocumentPermissionService>();
-
-
 var config = builder.Configuration;
 
 builder.Services.AddAuthentication().AddGoogle(options =>
