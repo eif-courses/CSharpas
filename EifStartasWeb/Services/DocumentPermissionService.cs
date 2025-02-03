@@ -13,25 +13,7 @@ public class DocumentPermissionService
         _dbContext = dbContext;
     }
 
-    public async Task GrantDefaultPermissionsAsync(Document document, string studentId)
-    {
-        var student = await _dbContext.Students
-            .Include(s => s.Supervisor)
-            .FirstOrDefaultAsync(s => s.UserId == studentId);
-
-        if (student == null || student.Supervisor == null)
-            return;
-
-        // Grant Supervisor access
-        _dbContext.DocumentPermissions.Add(new DocumentPermission
-        {
-            DocumentId = document.Id,
-            SupervisorId = student.Supervisor.Id,
-            PermissionType = DocumentPermissionType.View
-        });
-
-        await _dbContext.SaveChangesAsync();
-    }
+    
 
     public async Task<bool> CanUserAccessDocumentAsync(string userId, int documentId)
     {

@@ -119,15 +119,17 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 
     private static string TemporaryFluentButtonFix(string provider)
     {
-        // Temporary workaround for FluentButton returning a provider value twice
-        // Split the comma-separated list of strings
         var providers = provider.Split(',');
 
-        // Find the value that appears twice in the list
-        provider = providers.GroupBy(p => p)
+        var duplicateProvider = providers.GroupBy(p => p)
             .Where(g => g.Count() == 2)
-            .Select(g => g.Key)
-            .First();
-        return provider;
+            .Select(g => g.Key);
+
+        if (!duplicateProvider.Any())
+        {
+            return providers.FirstOrDefault() ?? string.Empty; // Fallback to first provider or empty string
+        }
+
+        return duplicateProvider.First();
     }
 }

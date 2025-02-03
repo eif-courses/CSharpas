@@ -25,17 +25,21 @@ public class Document
 public class Student
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string UserId { get; set; } // Foreign key to IdentityUser
-    public IdentityUser User { get; set; }
-
-    public ICollection<Document> Documents { get; set; }
-    public int SupervisorId { get; set; }
-    public Supervisor Supervisor { get; set; }
+    public required string Name { get; set; }
+    
+    public required string Group { get; set; }
+    
+    public required DateTime CurrentYear { get; set; }
+    
+    public required String StudyProgram { get; set; }
+    
+    public ICollection<Document>? Documents { get; set; }
+    public int? SupervisorId { get; set; }
+    public Supervisor? Supervisor { get; set; }
 
     // One-to-One relationship with reports
-    public SupervisorReport SupervisorReport { get; set; }
-    public ExternalReviewerReport ExternalReviewerReport { get; set; }
+    public SupervisorReport? SupervisorReport { get; set; }
+    public ExternalReviewerReport? ExternalReviewerReport { get; set; }
 }
 
 public class Supervisor

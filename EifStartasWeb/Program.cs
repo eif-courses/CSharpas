@@ -101,7 +101,14 @@ else
 }
 
 
+var passwordHasher = new PasswordHasher<IdentityUser>();
 
+// Hash the password
+string password = "Kolegija1@";
+string hashedPassword = passwordHasher.HashPassword(null, password);
+
+// Output the hashed password
+Console.WriteLine(hashedPassword);
 
 
 app.MapControllers();
