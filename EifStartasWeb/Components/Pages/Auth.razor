@@ -1,7 +1,5 @@
 ﻿@page "/auth"
-
 @using Microsoft.AspNetCore.Authorization
-
 @attribute [Authorize]
 
 <PageTitle>Auth</PageTitle>
@@ -9,5 +7,18 @@
 <h1>You are authenticated</h1>
 
 <AuthorizeView>
-    Hello @context.User.Identity?.Name!
+    <Authorized>
+        <p>Hello @context.User.Identity?.Name!</p>
+        
+        <h3>User Information:</h3>
+        <ul>
+            @foreach (var claim in context.User.Claims)
+            {
+                <li><strong>@claim.Type:</strong> @claim.Value</li>
+            }
+        </ul>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not authorized to view this content.</p>
+    </NotAuthorized>
 </AuthorizeView>

@@ -28,12 +28,13 @@ public class StudentRecord
 }public class Document
 {
     public int Id { get; set; } // Unique identifier for the document
-    public int StudentRecordId { get; set; } // Foreign key to StudentRecord
+    
     public string DocumentType { get; set; } // Type of document (e.g., "Required Document 1")
     public string FilePath { get; set; } // Path or URL to the uploaded file
     public DateTime UploadedDate { get; set; } // Date when the document was uploaded
 
     // Navigation property to the associated StudentRecord
+    public int StudentRecordId { get; set; } // Foreign key to StudentRecord
     public StudentRecord StudentRecord { get; set; }
 }
 

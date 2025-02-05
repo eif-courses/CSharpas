@@ -2,5 +2,5 @@
 
 public interface IDataImportService
 {
-    public Task ImportFromExcelAsync(string filePath);
+    public Task ImportStudentRecordsFromExcel(string filePath);
 }

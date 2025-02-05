@@ -1,0 +1,49 @@
+﻿@page "/import"
+@inject IDataImportService ImportService
+@using EifStartasWeb.Services.Interfaces
+
+<h3>Import Student Records</h3>
+
+<p>@StatusMessage</p>
+
+@code {
+    private string StatusMessage = "Importing data...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ImportService == null)
+        {
+            StatusMessage = "ImportService is not registered!";
+            Console.WriteLine("Error: ImportService is null.");
+            return;
+        }
+
+        //await ImportFromStaticFile();
+    }
+
+    private async Task ImportFromStaticFile()
+    {
+        var filePath = "C:\\Users\\mgzeg\\OneDrive\\Desktop\\DataImporter.xlsx";
+
+        if (!File.Exists(filePath))
+        {
+            StatusMessage = "Error: File not found!";
+            Console.WriteLine("Error: File not found!");
+            return;
+        }
+
+        Console.WriteLine($"Starting import from: {filePath}");
+
+        try
+        {
+            await ImportService.ImportStudentRecordsFromExcel(filePath);
+            StatusMessage = "Import successful!";
+            Console.WriteLine("Import successful!");
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+            Console.WriteLine($"Import error: {ex}");
+        }
+    }
+}

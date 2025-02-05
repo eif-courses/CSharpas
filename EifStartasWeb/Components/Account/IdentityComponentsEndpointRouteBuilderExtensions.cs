@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using EifStartasWeb.Components.Account.Pages;
 using EifStartasWeb.Components.Account.Pages.Manage;
-using EifStartasWeb.Data;
+
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace Microsoft.AspNetCore.Routing;
 
@@ -44,15 +45,121 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             return TypedResults.Challenge(properties, [provider]);
         });
 
+        //  accountGroup.MapPost("/Logout", async (
+        //    ClaimsPrincipal user,
+        //   [FromServices] SignInManager<IdentityUser> signInManager,
+        //    [FromForm] string returnUrl) =>
+        //  {
+        //
+        //       await signInManager.SignOutAsync();
+        //     return TypedResults.LocalRedirect($"~/{returnUrl}");
+        // });
+
+        // accountGroup.MapPost("/Logout", async (
+        //     ClaimsPrincipal user,
+        //     [FromServices] SignInManager<IdentityUser> signInManager,
+        //     [FromServices] IAuthenticationService authenticationService,
+        //     HttpContext httpContext,
+        //     [FromForm] string returnUrl) =>
+        // {
+        //     // Sign out of local authentication
+        //     await signInManager.SignOutAsync();
+        //
+        //     Console.WriteLine($"Return URL: {returnUrl}"); // Log the return URL
+        //
+        //     // Sign out of the external authentication (e.g., Azure AD)
+        //     var authProperties = new AuthenticationProperties { RedirectUri = returnUrl }; // Set properties as needed
+        //     await authenticationService.SignOutAsync(httpContext, OpenIdConnectDefaults.AuthenticationScheme, authProperties);
+        //
+        //     // Optionally, sign out from any other cookie schemes if used
+        //     await authenticationService.SignOutAsync(httpContext, "Identity.Application", authProperties);
+        //     await authenticationService.SignOutAsync(httpContext, "Identity.External", authProperties);
+        //     await authenticationService.SignOutAsync(httpContext, "Cookies", authProperties); // Add this if you're using another cookie scheme
+        //
+        //     
+        //     if (string.IsNullOrEmpty(returnUrl) || !returnUrl.StartsWith("/"))
+        //     {
+        //         returnUrl = "/auth";
+        //     }
+        //
+        //     
+        //     // Redirect to the return URL
+        //     return TypedResults.LocalRedirect(returnUrl);
+        // });
+        //
         accountGroup.MapPost("/Logout", async (
             ClaimsPrincipal user,
             [FromServices] SignInManager<IdentityUser> signInManager,
+            [FromServices] IAuthenticationService authenticationService,
+            HttpContext httpContext,
             [FromForm] string returnUrl) =>
         {
+            // Sign out of local authentication
             await signInManager.SignOutAsync();
-            return TypedResults.LocalRedirect($"~/{returnUrl}");
+        
+            Console.WriteLine($"Return URL: {returnUrl}"); // Log the return URL
+        
+            // Sign out of the external authentication (e.g., Azure AD)
+            //
+            var authProperties = new AuthenticationProperties { RedirectUri = "https://localhost:5111/signout-callback" };
+            
+            
+           await authenticationService.SignOutAsync(httpContext, OpenIdConnectDefaults.AuthenticationScheme, authProperties);
+        
+            // Optionally, sign out from any other cookie schemes if used
+           await authenticationService.SignOutAsync(httpContext, "Identity.Application", authProperties);
+           await authenticationService.SignOutAsync(httpContext, "Identity.External", authProperties);
+           await authenticationService.SignOutAsync(httpContext, "Cookies", authProperties); // Add this if you're using another cookie scheme
+        
+            // Redirect to Azure AD logout endpoint
+            var logoutUri = $"https://login.microsoftonline.com/43864a51-470c-4314-a939-57bf31cb1138/oauth2/v2.0/logout?post_logout_redirect_uri=https://localhost:5111/signout-callback";
+        
+            // Redirect to the Azure AD logout endpoint
+            return TypedResults.Redirect(logoutUri);
         });
-
+        
+        
+        // accountGroup.MapPost("/Logout", async (
+        //     ClaimsPrincipal user,
+        //     [FromServices] SignInManager<IdentityUser> signInManager,
+        //     [FromServices] IAuthenticationService authenticationService,
+        //     HttpContext httpContext) =>
+        // {
+        //     // Determine the authentication scheme
+        //     var authScheme = user.Identity?.AuthenticationType;
+        //
+        //         // var authProperties = new AuthenticationProperties(); // Create empty auth properties
+        //
+        //     if (authScheme == OpenIdConnectDefaults.AuthenticationScheme)
+        //     {
+        //          var authProperties = new AuthenticationProperties { RedirectUri = "http://localhost:5111/signout-callback" };
+        //          
+        //          
+        //         await authenticationService.SignOutAsync(httpContext, OpenIdConnectDefaults.AuthenticationScheme, authProperties);
+        //         
+        //          // Optionally, sign out from any other cookie schemes if used
+        //        // await authenticationService.SignOutAsync(httpContext, "Identity.Application", authProperties);
+        //        // await authenticationService.SignOutAsync(httpContext, "Identity.External", authProperties);
+        //         //await authenticationService.SignOutAsync(httpContext, "Cookies", authProperties); // Add this if you're using another cookie scheme
+        //         
+        //          // Redirect to Azure AD logout endpoint
+        //          var logoutUri = $"https://login.microsoftonline.com/43864a51-470c-4314-a939-57bf31cb1138/oauth2/v2.0/logout?post_logout_redirect_uri=http://localhost:5111/signout-callback";
+        //         
+        //          // Redirect to the Azure AD logout endpoint
+        //          return TypedResults.Redirect(logoutUri);
+        //         //return TypedResults.Redirect(logoutUri);
+        //     }
+        //     else
+        //     {
+        //         // User signed in locally, log out from local only
+        //         await signInManager.SignOutAsync();
+        //         //await authenticationService.SignOutAsync(httpContext, "Identity.Application", authProperties);
+        //
+        //         return TypedResults.Redirect("/");
+        //     }
+        // });
+        
+        
         var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
 
         manageGroup.MapPost("/LinkExternalLogin", async (

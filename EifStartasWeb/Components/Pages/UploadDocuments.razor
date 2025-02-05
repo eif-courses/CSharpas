@@ -1,0 +1,79 @@
+﻿@page "/upload-documents"
+@inject IWebHostEnvironment Env
+@rendermode InteractiveServer
+
+<h3>Upload Documents</h3>
+
+<FluentInputFile Id="zip-video-uploader"
+                 Mode="InputFileMode.SaveToTemporaryFolder"
+                 Multiple="true"
+                 MaximumFileCount="4"
+                 MaximumFileSize="@(10 * 1024 * 1024)"
+                 Accept=".zip,.mp4,.avi,.mov,.mkv"
+                 @bind-ProgressPercent="@ProgressPercent"
+                 OnCompleted="@OnCompletedAsync"
+                 Style="height: 300px;">
+    <ChildContent>
+        <label for="zip-video-uploader">
+            <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())" />
+        </label>
+        <div>
+            Drag ZIP or Video files here you wish to upload,
+            or <label for="zip-video-uploader">browse</label>
+            for them<span style="color: red;">*</span>.
+            <br />
+            <em>Maximum of 4 files allowed.</em>
+        </div>
+    </ChildContent>
+</FluentInputFile>
+
+@if (Files.Any())
+{
+    <h4>Uploaded ZIP/Video Files:</h4>
+    <ul>
+        @foreach (var file in Files)
+        {
+            <li>
+                <b>@file.Name</b> 🔹
+                @($"{Decimal.Divide(file.Size, 1024):N} KB") 🔹
+                @file.ContentType 🔹
+                @file.LocalFile?.FullName
+                @file.ErrorMessage
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    int ProgressPercent = 0;
+    FluentInputFileEventArgs[] Files = Array.Empty<FluentInputFileEventArgs>();
+
+    private async Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
+    {
+        Files = files.ToArray();
+
+        try
+        {
+            // Save files to server
+            await SaveFilesToServer(Files, Env.WebRootPath, "uploads");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving files: {ex.Message}");
+        }
+
+        // Reset progress
+        await Task.Delay(3000);
+        ProgressPercent = 0;
+    }
+
+    private async Task SaveFilesToServer(FluentInputFileEventArgs[] files, string rootPath, string folderName)
+    {
+        foreach (var file in files)
+        {
+            var filePath = Path.Combine(rootPath, folderName, file.Name);
+            await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            await file.Stream.CopyToAsync(stream);
+        }
+    }
+}
